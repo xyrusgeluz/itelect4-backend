@@ -17,7 +17,16 @@ export const app = express();
 // Lets a browser on another port -- the Vite app on 5173 -- call this
 // one. Without it the browser blocks the response before your code
 // ever sees it. Postman is not a browser, so it never needs this.
-app.use(cors());
+// app.use(cors());
+
+// One environment variable, comma-separated, so the list is different
+// on your laptop and on Vercel without the code knowing which it is.
+const ALLOWED_ORIGINS = (process.env.CORS_ORIGIN ?? "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter((origin) => origin !== "");
+
+app.use(cors({ origin: ALLOWED_ORIGINS }));
 
 // Reads a JSON request body and puts it on req.body. Without this
 // line req.body is undefined, and `const { email } = req.body`
