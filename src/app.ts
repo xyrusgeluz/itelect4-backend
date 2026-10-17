@@ -7,6 +7,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import { authRouter } from "./routes/auth";
 import { itemRouter } from "./routes/items";
+import { connectDB } from "./config/db";
 
 // This file builds the app and stops. It never opens a port and never
 // touches the database, so anything that wants an app -- server.ts, or
@@ -22,6 +23,17 @@ app.use(cors());
 // line req.body is undefined, and `const { email } = req.body`
 // throws.
 app.use(express.json());
+
+// ===== SESSION 10: the line that makes this work on Vercel ==========
+// On your laptop, server.ts connects to MongoDB and only then starts
+// listening, so a request cannot arrive before the connection exists.
+// Deployed there is no server.ts step -- the app IS the function, and
+// a request is the first thing that happens. So the waiting moves
+// here, in front of every route.
+app.use(async (_req: Request, _res: Response, next: NextFunction) => {
+  await connectDB();
+  next();
+});
 
 app.get("/api/health", (_req: Request, res: Response) => {
   res.json({ ok: true, db: mongoose.connection.readyState === 1 });
@@ -64,3 +76,9 @@ app.use(
     res.status(500).json({ message: "Something went wrong" });
   },
 );
+
+// Vercel looks for an Express app in six places, and src/app.ts is one
+// of them. What it needs there is a default export -- that is the
+// whole of the deployment configuration for this project, and it is
+// why there is no vercel.json in this repo.
+export default app;

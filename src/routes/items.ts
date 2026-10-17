@@ -5,43 +5,35 @@ import type { NewItemBody } from "../types/index";
 
 export const itemRouter = Router();
 
-// One line, and every route in this file is behind the token check.
-// Anything above this line would be public; everything below needs a
-// valid Authorization header.
-itemRouter.use(requireAuth);
-
 interface IdParam {
   id: string;
 }
 
-// GET /api/items -- only the ones belonging to this token
-itemRouter.get("/", async (req: Request, res: Response) => {
-  const items = await Item.find({
-    postedBy: req.userId,
-  }).sort({ dateReported: -1 }); // -1 means descending (newest first)
+// There is no requireAuth line above these two routes, and that is
+// the point. items.ts puts one further down so every route below it
+// is private; the item list is what the app shows before anybody has
+// logged in, so these two are public on purpose.
 
+// GET /api/items -- the full list, newest first
+itemRouter.get("/", async (_req: Request, res: Response) => {
+  const items = await Item.find().sort({ dateReported: -1 });
   res.json(items);
 });
 
-// GET /api/items/:id
-itemRouter.get(
-  "/:id",
-  async (req: Request<IdParam>, res: Response) => {
-    // Both halves matter: the right row, AND the right owner. Without
-    // postedBy here, changing the id in the URL reads another row.
-    const item = await Item.findOne({
-      _id: req.params.id,
-      postedBy: req.userId,
-    });
+// GET /api/items/:id -- one item by its id
+itemRouter.get("/:id", async (req: Request<IdParam>, res: Response) => {
+  const item = await Item.findById(req.params.id);
+  if (!item) {
+    res.status(404).json({ message: "No item with that id" });
+    return;
+  }
+  res.json(item);
+});
 
-    if (!item) {
-      res.status(404).json({ message: "No item with that id" });
-      return;
-    }
-
-    res.json(item);
-  },
-);
+// One line, and every route in this file is behind the token check.
+// Anything above this line would be public; everything below needs a
+// valid Authorization header.
+itemRouter.use(requireAuth);
 
 // POST /api/items
 itemRouter.post(

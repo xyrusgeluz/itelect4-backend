@@ -45,3 +45,15 @@ export type ItemDoc = Omit<Item, "id" | "postedBy"> & {
 // the server reads that off the token instead of trusting the request.
 // dateReported is also excluded — the schema defaults it to Date.now.
 export type NewItemBody = Pick<Item, "title" | "description" | "category" | "status">;
+
+// Claim is the one Session 1 interface with id, itemId, and claimedBy
+// as plain numbers -- so unlike the two types above there is something
+// to rename: those three become ObjectIds. Dropping id and retyping the
+// two references is doing one real job:
+// Omit and Pick both produce a MAPPED type, and an interface is not
+// one. The toJSON transform in Claim.ts takes Record<string, unknown>;
+// TypeScript hands it a mapped type happily and refuses an interface.
+export type ClaimDoc = Omit<Claim, "id" | "itemId" | "claimedBy"> & {
+  itemId: Types.ObjectId;
+  claimedBy: Types.ObjectId;
+};
