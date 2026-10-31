@@ -1,3 +1,18 @@
+[![CI](https://github.com/xyrusgeluz/itelect4-backend/actions/workflows/ci.yml/badge.svg)](https://github.com/xyrusgeluz/itelect4-backend/actions/workflows/ci.yml)
+
+## Architecture
+
+```mermaid
+flowchart LR
+  fe["itelect4-project<br/>React + Vite on Vercel"]
+  be["itelect4-backend<br/>Express on Vercel"]
+  db[("MongoDB Atlas")]
+  ai["Gemini API"]
+  fe -- "fetch + Bearer token" --> be
+  be -- "Mongoose" --> db
+  be -- "GEMINI_API_KEY" --> ai
+```
+
 # Campus Lost & Found Tracker — Backend (`itelect4-backend`)
 
 REST API backend for the **Campus Lost & Found Tracker**, built with **Node.js, Express 5, TypeScript, MongoDB Atlas (Mongoose)**, and **Google Gemini 2.0 Flash AI** via `@google/genai`.
@@ -6,7 +21,7 @@ Part of **ITELECT4 (Web Development) — Graded Task 5 (GT5)** at De La Salle Li
 
 ---
 
-## 🔗 Live Deployments & Repositories
+## Live Deployments & Repositories
 
 | Component | URL |
 |---|---|
@@ -17,7 +32,7 @@ Part of **ITELECT4 (Web Development) — Graded Task 5 (GT5)** at De La Salle Li
 
 ---
 
-## 🚀 Features
+## Features
 
 - **JWT Authentication & Password Hashing**:
   - `POST /api/auth/register` — User creation with bcrypt password hashing (10 salt rounds) and uniqueness validation.
@@ -40,7 +55,7 @@ Part of **ITELECT4 (Web Development) — Graded Task 5 (GT5)** at De La Salle Li
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Runtime & Language**: Node.js, TypeScript
 - **Framework**: Express 5
@@ -51,7 +66,7 @@ Part of **ITELECT4 (Web Development) — Graded Task 5 (GT5)** at De La Salle Li
 
 ---
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```
 itelect4-backend/
@@ -88,7 +103,7 @@ itelect4-backend/
 
 ---
 
-## ⚙️ Environment Variables
+## Environment Variables
 
 Create a `.env` file in the root of `itelect4-backend`:
 
@@ -104,7 +119,7 @@ GEMINI_API_KEY=AIzaSy...
 
 ---
 
-## 💻 Local Installation & Setup
+## Local Installation & Setup
 
 1. **Clone the repository**:
    ```bash
@@ -147,7 +162,7 @@ GEMINI_API_KEY=AIzaSy...
 
 ---
 
-## 📡 API Endpoints
+## API Endpoints
 
 | Method | Endpoint | Protection | Description |
 |---|---|---|---|
